@@ -5,14 +5,16 @@ export class Editor extends Component {
         super(props);
         this.state = {
             name: "Bob",
-            flavor: "Vanilla",
+            flavors: ["Vanilla"],
+            size: "small",
             toppings: ["Strawberries"],
             cone: "Waffle cone"
         }
 
-        this.flavors = ["Chocolate", "Double Chocolate", "Triple Chocolate", "Vanilla"];
+        this.flavors = ["Chocolate", "Strawberries", "White Chocolate", "Vanilla"];
         this.toppings = ["Sprinkles", "Fudge Sauce", "Strawberries", "Maple Syrup"];
         this.cones = ["Waffle cone", "Sugar cone", "Chocolate dipper", "Gluten free"]
+        this.sizes = ["small", "medium", "large"]
     }
 
     updateFormValues = (event) => {
@@ -34,15 +36,16 @@ export class Editor extends Component {
         event.persist();
         this.setState(state => {
             if (event.target.checked) {
-
+                state.flavors.push(event.target.name);
             } else {
-
+                const index = state.flavors.indexOf(event.target.name);
+                state.flavors.splice(index,1);
             }
         }, () => this.props.submit(this.state))
     }
 
-    getCheckboxId = (cone) => {
-        return `cone ${cone}`;
+    generateIdWithPrefix = (prefix, name) => {
+        return `${prefix}_${name}`;
     }
 
     render() {
@@ -58,19 +61,37 @@ export class Editor extends Component {
 
 
             <div className='form-group'>
-                <label>Ice Cream Flavors</label>
+                <label>Ice Cream Size</label>
                 <select className='form-control'
-                        name='flavor'
-                        value={this.state.flavor}
+                        name='size'
+                        value={this.state.size}
                         onChange={this.updateFormValueOptions}
                 >
-                    {this.flavors.map(
-                        flavor =>
-                            <option value={flavor} key={flavor}>
-                                {flavor}
+                    {this.sizes.map(
+                        size =>
+                            <option value={size} key={size}>
+                                {size}
                             </option>
                     )}
                 </select>
+            </div>
+
+
+            <div className='form-group'>
+                <label>Ice Cream Flavors</label>
+                {this.flavors.map(flavor =>
+                    <div className='form-check' key={flavor}>
+                        <input type="checkbox" className='form-check-input'
+                               name={flavor}
+                               id={this.generateIdWithPrefix('flavor', flavor)}
+                               checked={this.state.flavors.indexOf(flavor) > -1}
+                               onChange={this.updateFormValueCheck}
+                        />
+                        <label className='form-check-label' htmlFor={this.generateIdWithPrefix('flavor', flavor)}>
+                            {flavor}
+                        </label>
+                    </div>
+                )}
             </div>
 
             <div className='form-group'>
@@ -96,12 +117,12 @@ export class Editor extends Component {
                     <div className='form-check' key={cone}>
                         <input type="radio" className='form-check-input'
                                name='cone'
-                               id={this.getCheckboxId(cone)}
+                               id={this.generateIdWithPrefix('cone', cone)}
                                value={cone}
                                checked={this.state.cone === cone}
                                onChange={this.updateFormValues}
                         />
-                        <label className='form-check-label' for={this.getCheckboxId(cone)}>
+                        <label className='form-check-label' for={this.generateIdWithPrefix('cone', cone)}>
                             {cone}
                         </label>
                     </div>

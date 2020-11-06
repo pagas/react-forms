@@ -8,7 +8,8 @@ export class Editor extends Component {
             flavors: ["Vanilla"],
             size: "small",
             toppings: ["Strawberries"],
-            cone: "Waffle cone"
+            cone: "Waffle cone",
+            orderDetails: ""
         }
 
         this.flavors = ["Chocolate", "Strawberries", "White Chocolate", "Vanilla"];
@@ -129,6 +130,16 @@ export class Editor extends Component {
                 )}
             </div>
 
+
+            <div className="form-group">
+                <label>Order Details</label>
+                <textarea className="form-control"
+                          name="orderDetails"
+                          value={this.state.orderDetails}
+                          onChange={this.updateFormValues}
+                ></textarea>
+
+            </div>
         </div>
     }
 }

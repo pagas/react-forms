@@ -6,11 +6,13 @@ export class Editor extends Component {
         this.state = {
             name: "Bob",
             flavor: "Vanilla",
-            toppings: ["Strawberries"]
+            toppings: ["Strawberries"],
+            cone: "Waffle cone"
         }
 
         this.flavors = ["Chocolate", "Double Chocolate", "Triple Chocolate", "Vanilla"];
         this.toppings = ["Sprinkles", "Fudge Sauce", "Strawberries", "Maple Syrup"];
+        this.cones = ["Waffle cone", "Sugar cone", "Chocolate dipper", "Gluten free"]
     }
 
     updateFormValues = (event) => {
@@ -26,6 +28,21 @@ export class Editor extends Component {
         this.setState({[event.target.name]: options},
             () => this.props.submit(this.state)
         );
+    }
+
+    updateFormValueCheck = (event) => {
+        event.persist();
+        this.setState(state => {
+            if (event.target.checked) {
+
+            } else {
+
+            }
+        }, () => this.props.submit(this.state))
+    }
+
+    getCheckboxId = (cone) => {
+        return `cone ${cone}`;
     }
 
     render() {
@@ -71,6 +88,24 @@ export class Editor extends Component {
                             </option>
                     )}
                 </select>
+            </div>
+
+            <div className='form-group'>
+                <label>Ice Cream Cones</label>
+                {this.cones.map(cone =>
+                    <div className='form-check' key={cone}>
+                        <input type="radio" className='form-check-input'
+                               name='cone'
+                               id={this.getCheckboxId(cone)}
+                               value={cone}
+                               checked={this.state.cone === cone}
+                               onChange={this.updateFormValues}
+                        />
+                        <label className='form-check-label' for={this.getCheckboxId(cone)}>
+                            {cone}
+                        </label>
+                    </div>
+                )}
             </div>
 
         </div>

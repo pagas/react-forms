@@ -1,10 +1,13 @@
 import React, {Component} from 'react';
+import {FormValidator} from "../forms/FormValidator";
+import {ValidationMessage} from "../forms/ValidationMessage";
 
 export class Editor extends Component {
     constructor(props) {
         super(props);
         this.state = {
             name: "Bob",
+            email: "",
             flavors: ["Vanilla"],
             size: "small",
             toppings: ["Strawberries"],
@@ -14,14 +17,17 @@ export class Editor extends Component {
 
         this.flavors = ["Chocolate", "Strawberries", "White Chocolate", "Vanilla"];
         this.toppings = ["Sprinkles", "Fudge Sauce", "Strawberries", "Maple Syrup"];
-        this.cones = ["Waffle cone", "Sugar cone", "Chocolate dipper", "Gluten free"]
-        this.sizes = ["small", "medium", "large"]
+        this.cones = ["Waffle cone", "Sugar cone", "Chocolate dipper", "Gluten free"];
+        this.sizes = ["small", "medium", "large"];
+        this.rules = {
+            name: {required: true, minlength: 3, alpha: true},
+            email: {required: true, email: true},
+            orderDetails: {required: true}
+        }
     }
 
     updateFormValues = (event) => {
-        this.setState({[event.target.name]: event.target.value},
-            () => this.props.submit(this.state)
-        )
+        this.setState({[event.target.name]: event.target.value})
     }
 
     updateFormValueOptions = (event) => {
@@ -40,7 +46,7 @@ export class Editor extends Component {
                 state.flavors.push(event.target.name);
             } else {
                 const index = state.flavors.indexOf(event.target.name);
-                state.flavors.splice(index,1);
+                state.flavors.splice(index, 1);
             }
         }, () => this.props.submit(this.state))
     }
@@ -51,15 +57,36 @@ export class Editor extends Component {
 
     render() {
         return <div className='h5 bg-info text-white p-2'>
-            <div className='form-group'>
-                <label>Name</label>
-                <input className="form-control"
-                       name="name"
-                       value={this.state.name}
-                       onChange={this.updateFormValues}
-                />
-            </div>
+            <FormValidator data={this.state} rules={this.rules} submit={this.props.submit}>
+                <div className='form-group'>
+                    <label>Name</label>
+                    <input className="form-control"
+                           name="name"
+                           value={this.state.name}
+                           onChange={this.updateFormValues}
+                    />
+                    <ValidationMessage field="name"/>
+                </div>
 
+                <div className='form-group'>
+                    <label>Email</label>
+                    <input className="form-control"
+                           name="email"
+                           value={this.state.email}
+                           onChange={this.updateFormValues}
+                    />
+                    <ValidationMessage field="email"/>
+                </div>
+                <div className="form-group">
+                    <label>Order Details</label>
+                    <textarea className="form-control"
+                              name="orderDetails"
+                              value={this.state.orderDetails}
+                              onChange={this.updateFormValues}
+                    ></textarea>
+                    <ValidationMessage field="orderDetails"/>
+                </div>
+            </FormValidator>
 
             <div className='form-group'>
                 <label>Ice Cream Size</label>
@@ -123,7 +150,7 @@ export class Editor extends Component {
                                checked={this.state.cone === cone}
                                onChange={this.updateFormValues}
                         />
-                        <label className='form-check-label' for={this.generateIdWithPrefix('cone', cone)}>
+                        <label className='form-check-label' htmlFor={this.generateIdWithPrefix('cone', cone)}>
                             {cone}
                         </label>
                     </div>
@@ -131,15 +158,6 @@ export class Editor extends Component {
             </div>
 
 
-            <div className="form-group">
-                <label>Order Details</label>
-                <textarea className="form-control"
-                          name="orderDetails"
-                          value={this.state.orderDetails}
-                          onChange={this.updateFormValues}
-                ></textarea>
-
-            </div>
         </div>
     }
 }

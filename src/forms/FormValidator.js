@@ -14,9 +14,15 @@ export class FormValidator extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        return {
-            errors: ValidateData(props.data, props.rules)
+        state.errors = ValidateData(props.data, props.rules);
+        // no previous errors from individual fields
+        if(state.formSubmitted && Object.keys(state.errors).length === 0) {
+            const formErrors = props.validateForm(props.data);
+            if (formErrors.length > 0) {
+                state.errors.form = formErrors;
+            }
         }
+        return state;
     }
 
     get formValid() {
@@ -28,10 +34,13 @@ export class FormValidator extends Component {
         this.setState(state => state.dirty[name] = true)
     }
 
-    handleClick = (ev) => {
+    handleClick = (event) => {
         this.setState({formSubmitted: true}, () => {
             if (this.formValid) {
-                this.props.submit(this.props.data);
+                const formErrors = this.props.validateForm(this.props.data);
+                if (formErrors.length === 0) {
+                    this.props.submit(this.props.data);
+                }
             }
         })
     }

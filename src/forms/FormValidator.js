@@ -14,7 +14,6 @@ export class FormValidator extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        console.log('props changed validate!!!', ValidateData(props.data, props.rules))
         return {
             errors: ValidateData(props.data, props.rules)
         }
